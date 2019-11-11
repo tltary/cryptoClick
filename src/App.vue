@@ -118,6 +118,7 @@
     </section>
     <b-modal id="exchange" centered>
       <div class="exchange__modal__block">
+        <p class="exchange__modal__text">You earned {{crypto}} coin</p>
         <input class="exchange__modal__input" type="number" v-model="exchangeSum">
         <p class="exchange__modal__text">You give {{exchangeSum}} - You get {{exchangeSum * currency}}</p>
         <button class="btn btn-success exchange__modal__btn exchange__modal__btn--left" v-on:click="okModal">Exchange</button>
@@ -129,10 +130,13 @@
 
 <script>
 
+import { secretKey } from './tuple';
+
 export default {
   name: 'app',
   data() {
     return {
+      secretKey: secretKey,
       crypto: 0,
       currency: 10,
       money: 0,
@@ -170,10 +174,31 @@ export default {
   },
   methods: {
     initGame() {
-      localStorage.crypto ? this.crypto = parseInt(localStorage.crypto) : this.crypto = 0;
-      localStorage.currency ? this.currency = parseInt(localStorage.currency) : this.currency = 10;
-      localStorage.money ? this.money = parseInt(localStorage.money) : this.money = 0;
-      localStorage.hardware ? this.hardware = JSON.parse(localStorage.hardware) : this.hardware.count = [{name: 'computer',count: 0,price: 500,power: 1,img: 'laptop',},{name: 'graphic',count: 0,price: 5000,power: 3,img: 'graphics-card',},{name: 'ASIC',count: 0,price: 10000,power: 5,img: 'server',}];
+      if (localStorage.hardware) {
+        let bytes = this.CryptoJS.AES.decrypt(localStorage.hardware, this.secretKey);
+        let original = bytes.toString(this.CryptoJS.enc.Utf8);
+        this.hardware = JSON.parse(original)
+      } else {
+        this.hardware.count = [{name: 'computer',count: 0,price: 500,power: 1,img: 'laptop',},{name: 'graphic',count: 0,price: 5000,power: 3,img: 'graphics-card',},{name: 'ASIC',count: 0,price: 10000,power: 5,img: 'server',}];
+      }
+      if (localStorage.crypto) {
+        let bytes = this.CryptoJS.AES.decrypt(localStorage.crypto, this.secretKey);
+        this.crypto = parseInt(bytes.toString(this.CryptoJS.enc.Utf8));
+      } else {
+        this.crypto = 0;
+      }
+      if (localStorage.currency) {
+        let bytes = this.CryptoJS.AES.decrypt(localStorage.currency, this.secretKey);
+        this.currency = parseInt(bytes.toString(this.CryptoJS.enc.Utf8));
+      } else {
+        this.currency = 10;
+      }
+      if (localStorage.money) {
+        let bytes = this.CryptoJS.AES.decrypt(localStorage.money, this.secretKey);
+        this.money = parseInt(bytes.toString(this.CryptoJS.enc.Utf8));
+      } else {
+        this.money = 0;
+      }
       this.gameWatch()
     },
     miningClick() {
@@ -185,18 +210,18 @@ export default {
     sellOne(item) {
       this.money = this.money + (this.hardware[item].price / 2);
       this.hardware[item].count = this.hardware[item].count - 1;
-      localStorage.hardware = JSON.stringify(this.hardware);
+      localStorage.hardware = this.CryptoJS.AES.encrypt(JSON.stringify(this.hardware), this.secretKey).toString();
     },
     sellAll(item) {
       this.money = this.money + ((this.hardware[item].price / 2) * this.hardware[item].count);
       this.hardware[item].count = 0;
-      localStorage.hardware = JSON.stringify(this.hardware);
+      localStorage.hardware = this.CryptoJS.AES.encrypt(JSON.stringify(this.hardware), this.secretKey).toString();
     },
     buyClick(item) {
       if (this.money >= this.hardware[item].price) {
         this.money = this.money - this.hardware[item].price;
         this.hardware[item].count = this.hardware[item].count + 1;
-        localStorage.hardware = JSON.stringify(this.hardware);
+        localStorage.hardware = this.CryptoJS.AES.encrypt(JSON.stringify(this.hardware), this.secretKey).toString();
       }
     },
     gameWatch() {
@@ -259,20 +284,19 @@ export default {
   },
   watch: {
     crypto(newVal) {
-      localStorage.crypto = newVal;
+      localStorage.crypto = this.CryptoJS.AES.encrypt(newVal.toString(), this.secretKey).toString();
     },
     currency(newVal) {
-      localStorage.currency = newVal;
+      localStorage.currency = this.CryptoJS.AES.encrypt(newVal.toString(), this.secretKey).toString();
     },
     money(newVal) {
-      localStorage.money = newVal;
-    },
-    hardware(newVal) {
-      localStorage.hardware = newVal;
+      localStorage.money = this.CryptoJS.AES.encrypt(newVal.toString(), this.secretKey).toString();
     },
     exchangeSum(newVal) {
       if (newVal > this.crypto) {
         this.exchangeSum = this.crypto;
+      } else if (newVal < 0) {
+        this.exchangeSum = 0;
       }
     }
   }
