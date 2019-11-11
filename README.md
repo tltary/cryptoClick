@@ -1,29 +1,9 @@
-# breakthechain
+# CryptoClick
 
-## Project setup
-```
-npm install
-```
+See [Demo](https://cpyrto.qwiwi.xyz/)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## ToDo
+* Refactoring code
+* Re-design
+* Add score board
+* Add achievements
