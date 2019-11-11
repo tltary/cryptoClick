@@ -91,7 +91,7 @@
               </p>
               <div class="row">
                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" v-for="(item, key) in hardware">
-                  <button v-if="money >= item.price" v-on:click="buyClick(key)" class="buy__btn">
+                  <button v-if="money >= item.price && item.count < 20" v-on:click="buyClick(key)" class="buy__btn">
                     <span class="buy__btn__logo">
                       <img v-bind:src="require(`./assets/${item.img}.svg`)">
                     </span>
@@ -100,11 +100,20 @@
                     <p class="buy__btn__power">Power: {{item.power}}</p>
                     <p class="buy__btn__price">Price:<br>{{item.price}} money</p>
                   </button>
-                  <button v-else class="buy__btn notSell">
+                  <button v-else-if="item.count < 20" class="buy__btn notSell">
                     <span class="buy__btn__logo">
                       <img v-bind:src="require(`./assets/${item.img}.svg`)">
                     </span>
                     <p class="buy__btn__title">Not enough money</p>
+                    <p class="buy__btn__name">{{item.name}}</p>
+                    <p class="buy__btn__power">Power: {{item.power}}</p>
+                    <p class="buy__btn__price">Price:<br>{{item.price}} money</p>
+                  </button>
+                  <button v-else class="buy__btn notSell">
+                    <span class="buy__btn__logo">
+                      <img v-bind:src="require(`./assets/${item.img}.svg`)">
+                    </span>
+                    <p class="buy__btn__title">You can not buy more than 20</p>
                     <p class="buy__btn__name">{{item.name}}</p>
                     <p class="buy__btn__power">Power: {{item.power}}</p>
                     <p class="buy__btn__price">Price:<br>{{item.price}} money</p>
