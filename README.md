@@ -1,6 +1,6 @@
 # CryptoClick
 
-See [Demo](https://cpyrto.qwiwi.xyz/)
+See [Demo](https://crypto.qwiwi.xyz/)
 
 ## ToDo
 * Refactoring code
