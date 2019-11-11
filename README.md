@@ -14,3 +14,4 @@ See [Demo](https://crypto.qwiwi.xyz/)
 * Add awesome mobile design
 * Add score board
 * Add achievements
+* Add more(i said MORE!!!!) mining device
